@@ -1,0 +1,26 @@
+Body{
+  align-items: center;
+  justify-content: center;
+  background-color:#F6F6F6;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.BoxContainer{    
+  display: grid;  
+  grid-template-areas: 
+  "card card";
+  gap: 2%;
+}
+
+@media(max-width:520px){
+
+  .BoxContainer{
+    display: grid;  
+    grid-template-areas:
+    "card"
+
+  }
+
+}
