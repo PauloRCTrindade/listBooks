@@ -7,26 +7,51 @@ import { api } from '../../services/api';
 
 import {
   Box,
-  HighlightedCard,
+  BoxedRow,
+  BoxedRowList,
+  ButtonLayout,
+  ButtonPrimary,
+  ButtonSecondary,
   IconSearchLight,
-  Touchable,
+  Image,
+  ResponsiveLayout,
 } from '@telefonica/mistica';
 
 export default function Home() {
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   async function getBooks() {
-    await api.get('/books').then(response => {
-      setData([response.data]);
-    });
+
+
+    if (search) {
+      console.log("search")
+      await api.get(`/books?search=${search}%20great`).then(response => {
+        setData([response.data]);
+      });
+    } else {
+      console.log("page")
+      await api.get(`/books/?page=${page}`).then(response => {
+        setData([response.data])
+      });
+    }
 
   }
 
-  const getImage = (value)=>{
+  const numberPage = (value) => {
 
-   const result = Object.keys(value).filter(item => item === 'image/jpeg');
-   console.log(result[0])
-   return result[0]
+    if (data[0]) {
+      let page = value / 32
+      let pageTrunc = Math.trunc(page)
+      if (page > pageTrunc) {
+        page = pageTrunc + 1
+      } else {
+        page = pageTrunc
+      }
+
+      return page
+    }
 
   }
 
@@ -34,10 +59,11 @@ export default function Home() {
 
     getBooks();
 
-  }, []);
+  }, [search]);
 
   const handleInput = (e) => {
-    console.log(e);
+    setSearch(e)
+
   }
 
   console.log(data)
@@ -45,50 +71,75 @@ export default function Home() {
   return (
 
     <>
-      <HeaderApp />
+      <ResponsiveLayout>
+        <HeaderApp amount={data[0] ? `Pagina ${page} de ${numberPage(data[0].count)}` : ""} />
 
-      <Box
-        paddingTop={32}
-        paddingRight={16}
-        paddingLeft={16}
-        paddingBottom={16}>
+        <Box
+          paddingTop={32}
+          paddingRight={16}
+          paddingLeft={16}
+          paddingBottom={16}>
 
-        <Box paddingBottom={16}>
+          <Box paddingBottom={16}>
 
-          <Input
-            label={"Busca"}
-            placeholder={"Digite sua Busca"}
-            onChange={handleInput}
-            endIcon={<IconSearchLight />} />
+            <Input
+              label={"Busca"}
+              placeholder={"Digite sua Busca"}
+              onChange={handleInput}
+              endIcon={<IconSearchLight />} />
+
+          </Box>
+
+          <Box className='BoxContainer' >
+
+            {
+              data && (
+                data.map(item => (
+                  <>
+                    {item.results.map(item => (
+                      <div>
+
+                        <BoxedRowList>
+                          <BoxedRow
+                            title={item.title}
+                            subtitle={item.authors[0]?.name}
+                            titleLinesMax={2}
+                            asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
+
+                          >
+                          </BoxedRow>
+
+                        </BoxedRowList>
+
+                      </div>
+
+                    ))}
+                  </>
+                ))
+
+
+              )
+            }
+
+            <Box paddingBottom={36}>
+              <ButtonLayout>
+
+                <ButtonPrimary onPress={() => setPage(page + 1)} >Próxima Página</ButtonPrimary>
+
+              </ButtonLayout>
+
+              <ButtonLayout>
+
+                <ButtonSecondary onPress={() => setPage(page - 1)} >Página Anterior</ButtonSecondary>
+
+              </ButtonLayout>
+            </Box>
+
+          </Box>
 
         </Box>
 
-        <Box className='BoxContainer' >
-
-          {
-            data && (
-              data.map(item => (
-                <>
-                  {item.results.map(item => (
-                    <div>
-                      <Touchable onPress={()=> console.log("clicou")}>
-                        <HighlightedCard
-                          title={item.title}
-                          imageFit='fit'
-                          description={item.authors[0].name}
-                          imageUrl={console.log(Object.entries(item.formats))} />
-                      </Touchable>
-                    </div>
-
-                  ))}
-                </>
-              ))
-            )
-          }
-
-        </Box>
-
-      </Box>
+      </ResponsiveLayout>
 
     </>
 
