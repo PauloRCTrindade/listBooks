@@ -9,18 +9,9 @@ Body{
 
 .BoxContainer{    
   display: grid;  
-  grid-template-areas: 
-  "card card";
-  gap: 2%;
+  gap: 0.5%;
 }
 
-@media(max-width:520px){
 
-  .BoxContainer{
-    display: grid;  
-    grid-template-areas:
-    "card"
 
-  }
 
-}
