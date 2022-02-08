@@ -1,19 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import './styles.css';
+import { api } from '../../services/api';
 
 import {
   Box,
   HighlightedCard,
   IconSearchLight,
+  Touchable,
 } from '@telefonica/mistica';
 
 export default function Home() {
-  const handleInput = (e) => {
-    console.log(e)
+  const [data, setData] = useState([]);
+
+  async function getBooks() {
+    await api.get('/books').then(response => {
+      setData([response.data]);
+    });
+
   }
+
+  const getImage = (value)=>{
+
+   const result = Object.keys(value).filter(item => item === 'image/jpeg');
+   console.log(result[0])
+   return result[0]
+
+  }
+
+  useEffect(() => {
+
+    getBooks();
+
+  }, []);
+
+  const handleInput = (e) => {
+    console.log(e);
+  }
+
+  console.log(data)
 
   return (
 
@@ -38,17 +65,27 @@ export default function Home() {
 
         <Box className='BoxContainer' >
 
-          <HighlightedCard
-            title='Livro 01'
-            description='Descrição do Livro'
-            imageUrl='https://i.imgur.com/jeDSXBU.jpg'
-            imageFit='fit' />
+          {
+            data && (
+              data.map(item => (
+                <>
+                  {item.results.map(item => (
+                    <div>
+                      <Touchable onPress={()=> console.log("clicou")}>
+                        <HighlightedCard
+                          title={item.title}
+                          imageFit='fit'
+                          description={item.authors[0].name}
+                          imageUrl={console.log(Object.entries(item.formats))} />
+                      </Touchable>
+                    </div>
 
-          <HighlightedCard
-            title='Livro 01'
-            description='Descrição do Livro'
-            imageUrl='https://i.imgur.com/jeDSXBU.jpg'
-            imageFit='fit' />
+                  ))}
+                </>
+              ))
+            )
+          }
+
         </Box>
 
       </Box>
@@ -57,3 +94,6 @@ export default function Home() {
 
   )
 };
+
+
+
