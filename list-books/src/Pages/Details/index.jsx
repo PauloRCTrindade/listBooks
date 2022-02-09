@@ -1,12 +1,21 @@
-import { Box, MediaCard, ResponsiveLayout, Tag } from '@telefonica/mistica';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import HeaderApp from '../../Components/Header';
+import {
+  Box,
+  ButtonLayout,
+  ButtonSecondary,
+  MediaCard,
+  ResponsiveLayout,
+  Tag
+} from '@telefonica/mistica';
 
 export default function Details() {
 
-  const dataDetailsBook = [JSON.parse(localStorage.getItem('detailsBooks'))]
+  const navigate = useNavigate()
 
-  console.log(dataDetailsBook)
+  const dataDetailsBook = [JSON.parse(localStorage.getItem('detailsBooks'))]
 
   const description = (item) => {
     return (
@@ -46,6 +55,17 @@ export default function Details() {
               ))
             )
           }
+
+          <Box paddingTop={32}>
+            <ButtonLayout>
+
+              <ButtonSecondary onPress={() =>
+                navigate('/')} >Página Inicial</ButtonSecondary>
+
+            </ButtonLayout>
+          </Box>
+
+
 
         </Box>
       </ResponsiveLayout>
