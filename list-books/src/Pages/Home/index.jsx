@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import './styles.css';
@@ -22,6 +24,8 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+
+  const navigate = useNavigate();
 
 
   const searchBooks = async () => {
@@ -87,6 +91,16 @@ export default function Home() {
 
   }
 
+  const detaisBooks = (data)=>{
+
+    localStorage.setItem('detailsBooks',JSON.stringify(data));
+
+    console.log(JSON.stringify(data));
+
+    navigate('/details');
+
+  }
+
   return (
 
     <>
@@ -120,7 +134,7 @@ export default function Home() {
                       <div>
                         <BoxedRowList >
                           <BoxedRow
-                            onPress={() => console.log(item.title)}
+                            onPress={() => detaisBooks(item) }
                             title={item.title}
                             subtitle={item.authors[0]?.name}
                             titleLinesMax={2}
