@@ -1,17 +1,16 @@
 Body{
-  align-items: center;
-  justify-content: center;
   background-color:#F6F6F6;
-  align-items: center;
-  justify-content: center;
-
 }
 
-.BoxContainer{    
+.BoxContainer{   
   display: grid;  
   gap: 0.5%;
 }
 
+.spinner{
+  display: flex;
+  justify-content: center;
+}
 
 
 
