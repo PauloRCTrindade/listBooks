@@ -18,29 +18,34 @@ import {
   IconSearchLight,
   Image,
   ResponsiveLayout,
+  Spinner,
 } from '@telefonica/mistica';
 
 export default function Home() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [showSpiner, setShowSpiner] = useState(true);
 
   const navigate = useNavigate();
 
 
   const searchBooks = async () => {
+    setShowSpiner(true);
 
     await api.get(`/books?search=${search}%20great`).then(response => {
       setData([response.data]);
-    });
+    }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
 
   const pagesBooks = async () => {
 
+    setShowSpiner(true);
+
     await api.get(`/books/?page=${page}`).then(response => {
       setData([response.data])
-    });
+    }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
 
@@ -91,15 +96,17 @@ export default function Home() {
 
   }
 
-  const detaisBooks = (data)=>{
+  const detaisBooks = (data) => {
 
-    localStorage.setItem('detailsBooks',JSON.stringify(data));
+    localStorage.setItem('detailsBooks', JSON.stringify(data));
 
     console.log(JSON.stringify(data));
 
     navigate('/details');
 
   }
+
+  console.log(showSpiner)
 
   return (
 
@@ -126,6 +133,15 @@ export default function Home() {
           <Box className='BoxContainer' >
 
             {
+              showSpiner && (
+                <Box className='spinner'>
+                  <Spinner size={42} />
+                </Box>
+
+              )
+            }
+
+            {
               data && (
                 data.map(item => (
                   <React.Fragment >
@@ -134,7 +150,7 @@ export default function Home() {
                       <div>
                         <BoxedRowList >
                           <BoxedRow
-                            onPress={() => detaisBooks(item) }
+                            onPress={() => detaisBooks(item)}
                             title={item.title}
                             subtitle={item.authors[0]?.name}
                             titleLinesMax={2}
@@ -151,21 +167,28 @@ export default function Home() {
                 ))
 
               )
+
             }
 
-            <Box paddingBottom={36}>
-              <ButtonLayout>
+            {
+              data && (
 
-                <ButtonPrimary onPress={() => setPage(page + 1)} >Próxima Página</ButtonPrimary>
+                <Box paddingTop={36} paddingBottom={36}>
+                  <ButtonLayout>
 
-              </ButtonLayout>
+                    <ButtonPrimary onPress={() => setPage(page + 1)} >Próxima Página</ButtonPrimary>
 
-              <ButtonLayout>
+                  </ButtonLayout>
 
-                <ButtonSecondary onPress={() => setPage(page - 1)} >Página Anterior</ButtonSecondary>
+                  <ButtonLayout>
 
-              </ButtonLayout>
-            </Box>
+                    <ButtonSecondary onPress={() => setPage(page - 1)} >Página Anterior</ButtonSecondary>
+
+                  </ButtonLayout>
+                </Box>
+              )
+
+            }
 
           </Box>
 
