@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
 import HeaderApp from '../../Components/Header';
@@ -22,19 +23,47 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  async function getBooks() {
 
+  const searchBooks = async () => {
+
+    await api.get(`/books?search=${search}%20great`).then(response => {
+      setData([response.data]);
+    });
+
+  }
+
+  const pagesBooks = async () => {
+
+    await api.get(`/books/?page=${page}`).then(response => {
+      setData([response.data])
+    });
+
+  }
+
+  const getBooks = () => {
 
     if (search) {
-      console.log("search")
-      await api.get(`/books?search=${search}%20great`).then(response => {
-        setData([response.data]);
-      });
+      searchBooks()
+
     } else {
-      console.log("page")
-      await api.get(`/books/?page=${page}`).then(response => {
-        setData([response.data])
-      });
+      pagesBooks()
+    }
+
+  }
+
+  useEffect(() => {
+
+    getBooks();
+
+  }, [search, page]);
+
+  const handleInput = (e) => {
+
+    if (e.length >= 4) {
+      setSearch(e)
+    } else {
+      console.log("setpage")
+      setPage(1)
     }
 
   }
@@ -50,44 +79,34 @@ export default function Home() {
         page = pageTrunc
       }
 
+      const length = data[0].results.length;
+      console.log(length);
+
       return page
     }
 
   }
 
-  useEffect(() => {
-
-    getBooks();
-
-  }, [search]);
-
-  const handleInput = (e) => {
-    setSearch(e)
-
-  }
-
-  console.log(data)
-
   return (
 
     <>
+      <HeaderApp amount={data[0] ? `Página ${page} de ${numberPage(data[0].count)}` : ""} />
       <ResponsiveLayout>
-        <HeaderApp amount={data[0] ? `Pagina ${page} de ${numberPage(data[0].count)}` : ""} />
 
         <Box
           paddingTop={32}
           paddingRight={16}
           paddingLeft={16}
-          paddingBottom={16}>
+          paddingBottom={16}
+        >
 
           <Box paddingBottom={16}>
-
             <Input
               label={"Busca"}
               placeholder={"Digite sua Busca"}
               onChange={handleInput}
-              endIcon={<IconSearchLight />} />
-
+              endIcon={<IconSearchLight />}
+            />
           </Box>
 
           <Box className='BoxContainer' >
@@ -95,17 +114,17 @@ export default function Home() {
             {
               data && (
                 data.map(item => (
-                  <>
+                  <React.Fragment >
                     {item.results.map(item => (
-                      <div>
 
-                        <BoxedRowList>
+                      <div>
+                        <BoxedRowList >
                           <BoxedRow
+                            onPress={() => console.log(item.title)}
                             title={item.title}
                             subtitle={item.authors[0]?.name}
                             titleLinesMax={2}
                             asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-
                           >
                           </BoxedRow>
 
@@ -114,9 +133,8 @@ export default function Home() {
                       </div>
 
                     ))}
-                  </>
+                  </React.Fragment>
                 ))
-
 
               )
             }
