@@ -1,13 +1,14 @@
 import React from "react";
-import Home from "../Pages/Home";
+
+import { BrowserRouter as Router} from "react-router-dom";
+
+import Routes from '../Routes/routes';
 
 export default function App() {
-  return (
-    <>
-      <Home />
-
-    </>
-
+  return (    
+    <Router>
+      <Routes />
+    </Router>
   );
 }
 
