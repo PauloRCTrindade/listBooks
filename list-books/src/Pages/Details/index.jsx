@@ -1,6 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { api } from '../../services/api';
 import HeaderApp from '../../Components/Header';
 import {
   Box,
@@ -14,8 +15,25 @@ import {
 export default function Details() {
 
   const navigate = useNavigate()
+  const [detailsBook, setDetailsBook] = useState('')
 
-  const dataDetailsBook = [JSON.parse(localStorage.getItem('detailsBooks'))]
+  const {id }= useParams();
+
+  const getDetailsBook = async() => {
+    console.log(id)
+    await api.get(`/books/${id}`).then(response => {
+      setDetailsBook([response.data])
+    }).catch(error => console.log(error)).finally();
+
+  }
+  
+  useEffect(()=> {
+    getDetailsBook()
+  },[])
+
+
+
+
 
   const description = (item) => {
     return (
@@ -40,9 +58,9 @@ export default function Details() {
         >
 
           {
-            dataDetailsBook && (
+            detailsBook && (
 
-              dataDetailsBook.map(item => (
+              detailsBook.map(item => (
 
                 <MediaCard
                   key={item => item}
