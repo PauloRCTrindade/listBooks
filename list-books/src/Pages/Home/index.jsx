@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
@@ -96,17 +96,6 @@ export default function Home() {
 
   }
 
-  const detaisBooks = (data) => {
-
-    localStorage.setItem('detailsBooks', JSON.stringify(data));
-
-    console.log(JSON.stringify(data));
-
-    navigate('/details');
-
-  }
-
-  console.log(showSpiner)
 
   return (
 
@@ -149,14 +138,17 @@ export default function Home() {
 
                       <div>
                         <BoxedRowList >
-                          <BoxedRow
-                            onPress={() => detaisBooks(item)}
+
+                          <Link to={`details/${item.id}`} >                       
+                          <BoxedRow                           
                             title={item.title}
                             subtitle={item.authors[0]?.name}
                             titleLinesMax={2}
                             asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
                           >
                           </BoxedRow>
+                          </Link>
+                         
 
                         </BoxedRowList>
 
