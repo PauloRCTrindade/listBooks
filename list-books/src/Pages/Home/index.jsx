@@ -6,9 +6,9 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
+import { books } from '../../store/Books/books.actions';
+import { api } from '../../Services/api';
 import './styles.css';
-import { api } from '../../services/api';
-import { books } from '../../store/books/books.actions';
 
 import {
   Box,
@@ -24,13 +24,12 @@ import {
 } from '@telefonica/mistica';
 
 function Home() {
-  
-  const [data, setData] = useState([]);
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
   const dispacth = useDispatch();
-  
+
   const result = useSelector(function (state) {
     return state.books
   })
@@ -50,7 +49,7 @@ function Home() {
 
     await api.get(`/books/?page=${page}`).then(response => {
       dispacth(books(response.data))
-      
+
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
@@ -85,7 +84,7 @@ function Home() {
 
   const numberPage = (value) => {
 
-    if (data[0]) {
+    if (result) {
       let page = value / 32
       let pageTrunc = Math.trunc(page)
       if (page > pageTrunc) {
@@ -94,19 +93,15 @@ function Home() {
         page = pageTrunc
       }
 
-      const length = data[0].results.length;
-      console.log(length);
-
       return page
     }
 
   }
 
-  console.log(result);
   return (
 
     <>
-      <HeaderApp amount={data[0] ? `Página ${page} de ${numberPage(data[0].count)}` : ""} />
+      <HeaderApp amount={result ? `Página ${page} de ${numberPage(result[0].count)}` : ""} />
       <ResponsiveLayout>
 
         <Box
@@ -166,7 +161,7 @@ function Home() {
             }
 
             {
-              data && (
+              result && (
 
                 <Box paddingTop={36} paddingBottom={36}>
                   <ButtonLayout>

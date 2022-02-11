@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { api } from '../../services/api';
+import { api } from '../../Services/api';
 import HeaderApp from '../../Components/Header';
 import {
   Box,
