@@ -95,8 +95,6 @@ export default function Home() {
     }
 
   }
-
-
   return (
 
     <>
@@ -139,7 +137,7 @@ export default function Home() {
                       <div>
                         <BoxedRowList >
 
-                          <Link to={`details/${item.id}`} >                       
+                          <Link style={{ textDecoration: 'none'}} to={`details/${item.id}`} >                       
                           <BoxedRow                           
                             title={item.title}
                             subtitle={item.authors[0]?.name}
@@ -147,8 +145,7 @@ export default function Home() {
                             asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
                           >
                           </BoxedRow>
-                          </Link>
-                         
+                          </Link>                        
 
                         </BoxedRowList>
 
@@ -157,9 +154,7 @@ export default function Home() {
                     ))}
                   </React.Fragment>
                 ))
-
               )
-
             }
 
             {
