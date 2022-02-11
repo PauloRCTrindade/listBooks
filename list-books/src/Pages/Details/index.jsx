@@ -14,26 +14,22 @@ import {
 
 export default function Details() {
 
-  const navigate = useNavigate()
-  const [detailsBook, setDetailsBook] = useState('')
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  const {id }= useParams();
+  const [detailsBook, setDetailsBook] = useState('');
 
-  const getDetailsBook = async() => {
-    console.log(id)
+  const getDetailsBook = async () => {
+
     await api.get(`/books/${id}`).then(response => {
       setDetailsBook([response.data])
     }).catch(error => console.log(error)).finally();
 
   }
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     getDetailsBook()
-  },[])
-
-
-
-
+  }, [])
 
   const description = (item) => {
     return (
@@ -82,8 +78,6 @@ export default function Details() {
 
             </ButtonLayout>
           </Box>
-
-
 
         </Box>
       </ResponsiveLayout>
