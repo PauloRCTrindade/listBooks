@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { connect, useDispatch, useSelector } from 'react-redux';
 
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import './styles.css';
 import { api } from '../../services/api';
+import { books } from '../../store/books/books.actions';
 
 import {
   Box,
@@ -21,20 +23,23 @@ import {
   Spinner,
 } from '@telefonica/mistica';
 
-export default function Home() {
+function Home() {
+  
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
-
-  const navigate = useNavigate();
-
+  const dispacth = useDispatch();
+  
+  const result = useSelector(function (state) {
+    return state.books
+  })
 
   const searchBooks = async () => {
     setShowSpiner(true);
 
     await api.get(`/books?search=${search}%20great`).then(response => {
-      setData([response.data]);
+      dispacth(books(response.data));
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
@@ -44,7 +49,8 @@ export default function Home() {
     setShowSpiner(true);
 
     await api.get(`/books/?page=${page}`).then(response => {
-      setData([response.data])
+      dispacth(books(response.data))
+      
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
@@ -95,6 +101,8 @@ export default function Home() {
     }
 
   }
+
+  console.log(result);
   return (
 
     <>
@@ -129,23 +137,23 @@ export default function Home() {
             }
 
             {
-              data && (
-                data.map(item => (
+              result && (
+                result.map(item => (
                   <React.Fragment >
                     {item.results.map(item => (
 
                       <div>
                         <BoxedRowList >
 
-                          <Link style={{ textDecoration: 'none'}} to={`details/${item.id}`} >                       
-                          <BoxedRow                           
-                            title={item.title}
-                            subtitle={item.authors[0]?.name}
-                            titleLinesMax={2}
-                            asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-                          >
-                          </BoxedRow>
-                          </Link>                        
+                          <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
+                            <BoxedRow
+                              title={item.title}
+                              subtitle={item.authors[0]?.name}
+                              titleLinesMax={2}
+                              asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
+                            >
+                            </BoxedRow>
+                          </Link>
 
                         </BoxedRowList>
 
@@ -188,5 +196,6 @@ export default function Home() {
   )
 };
 
+export default connect()(Home);
 
 
