@@ -1,9 +1,9 @@
-export function books(data){
+export const books = (data) =>{
   return{
     type:'BOOKS',
     payload:[data]
   }
-}
+};
 
 
 

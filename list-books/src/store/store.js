@@ -1,9 +1,9 @@
 import {createStore ,combineReducers} from 'redux';
 
-import booksReducer from './Books/books.reducer';
+import {ListReducers} from './Books/books.reducer';
 
-const rootReducer = combineReducers({
-    books : booksReducer
+export const rootReducer = combineReducers({
+    books : ListReducers
 })
 
  const store = createStore(rootReducer)

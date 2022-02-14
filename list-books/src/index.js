@@ -19,5 +19,5 @@ ReactDOM.render(
       <App />
     </Provider>
   </ThemeContextProvider>,
-  document.getElementById('root')
+  document.getElementById('root') || document.createElement('div')
 );

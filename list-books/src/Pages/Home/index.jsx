@@ -30,9 +30,7 @@ function Home() {
   const [showSpiner, setShowSpiner] = useState(true);
   const dispacth = useDispatch();
 
-  const result = useSelector(function (state) {
-    return state.books
-  })
+  const result = useSelector((state) => state.books)
 
   const searchBooks = async () => {
     setShowSpiner(true);
@@ -185,7 +183,7 @@ function Home() {
         </Box>
 
       </ResponsiveLayout>
-
+           
     </>
 
   )
