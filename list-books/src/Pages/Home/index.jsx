@@ -112,7 +112,7 @@ function Home() {
           <Box paddingBottom={16}>
             <Input
               label={"Busca"}
-              placeholder={"Digite sua Busca"}
+              placeholder={"busca"}
               onChange={handleInput}
               endIcon={<IconSearchLight />}
             />
@@ -183,7 +183,9 @@ function Home() {
         </Box>
 
       </ResponsiveLayout>
-           
+      <div>
+        <input type="text" placeholder='teste' />
+      </div>
     </>
 
   )
