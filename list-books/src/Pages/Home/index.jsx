@@ -7,9 +7,8 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
-import { api } from '../../Services/api';
+import { getBooksApi, getSearchBooksApi } from '../../Services/api';
 import './styles.css';
-
 import {
   Box,
   BoxedRow,
@@ -28,6 +27,9 @@ function Home() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
+
+
+
   const dispacth = useDispatch();
 
   const result = useSelector((state) => state.books)
@@ -35,7 +37,7 @@ function Home() {
   const searchBooks = async () => {
     setShowSpiner(true);
 
-    await api.get(`/books?search=${search}%20great`).then(response => {
+    await getSearchBooksApi.data(`/books?search=${search}%20great`).then(response => {
       dispacth(books(response.data));
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
@@ -45,8 +47,9 @@ function Home() {
 
     setShowSpiner(true);
 
-    await api.get(`/books/?page=${page}`).then(response => {
-      dispacth(books(response.data))
+    await getBooksApi.data(`/books/?page=${page}`).then(response => {
+
+      dispacth(books(response))
 
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
@@ -137,7 +140,6 @@ function Home() {
 
                       <div>
                         <BoxedRowList >
-
                           <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
                             <BoxedRow
                               title={item.title}
@@ -164,7 +166,7 @@ function Home() {
                 <Box paddingTop={36} paddingBottom={36}>
                   <ButtonLayout>
 
-                    <ButtonPrimary onPress={() => setPage(page + 1)} >Próxima Página</ButtonPrimary>
+                    <ButtonPrimary onPress={() => setPage(page + 1)} >Póxima Página</ButtonPrimary>
 
                   </ButtonLayout>
 
@@ -183,9 +185,6 @@ function Home() {
         </Box>
 
       </ResponsiveLayout>
-      <div>
-        <input type="text" placeholder='teste' />
-      </div>
     </>
 
   )
