@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { screen, render } from '@testing-library/react'
 import { getVivoSkin, ThemeContextProvider } from '@telefonica/mistica';
-import { waitFor } from '@testing-library/dom';
+import { fireEvent, waitFor } from '@testing-library/dom';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
@@ -13,11 +13,8 @@ import { getBooksApi } from '../../Services/api';
 import store from '../../store/store';
 import Home from './index';
 
-describe('list books page', () => {
-
-  it("render page", async () => {
-
-  jest.spyOn(getBooksApi, "data").mockImplementation(() => Promise.resolve(mockBooksApi))
+describe('list books search', () => {
+  it("should show all books searched", async () => {
 
     const { debug } = render(
       <ThemeContextProvider
@@ -31,11 +28,42 @@ describe('list books page', () => {
     )
 
     await waitFor(() => {
-      debug()
-      expect(screen.getByText(/teste/i)).toBeInTheDocument()
+      setTimeout(() => {
+
+        fireEvent.change(screen.getByTestId('input'), { target: { value: 'pride' } })
+
+      }, 500)
+      expect(screen.getByText(/Great Hike; or, The Pride of the Khaki Troop/i)).toBeInTheDocument()
 
     }, { timeout: 4000 })
 
+  })
+})
+
+describe('list books page 01', () => {
+
+  it("should show all books on the first page", async () => {
+
+    jest.spyOn(getBooksApi, "data").mockImplementation(() => Promise.resolve(mockBooksApi))
+
+    const { debug } = render(
+      <ThemeContextProvider
+        theme={{ skin: getVivoSkin(), i18n: { locale: 'pt-BR', phoneNumberFormattingRegionCode: 'BR' } }}>
+        <MemoryRouter>
+          <Provider store={store}>
+            <Home />
+          </Provider>
+        </MemoryRouter>
+      </ThemeContextProvider>
+    )
+
+    await waitFor(() => {
+
+      expect(screen.getByText(/book 01/i)).toBeInTheDocument()
+
+    }, { timeout: 3000 })
+
+   // debug()
   })
 
 })

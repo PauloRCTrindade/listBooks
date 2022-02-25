@@ -8,6 +8,7 @@ import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
 import { getBooksApi, getSearchBooksApi } from '../../Services/api';
+import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 import './styles.css';
 import {
   Box,
@@ -27,18 +28,17 @@ function Home() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
-
-
+  const [valueInput, setValueInput] = useState("");
 
   const dispacth = useDispatch();
 
-  const result = useSelector((state) => state.books)
+  const booksApi = useSelector((state) => state.books)
 
   const searchBooks = async () => {
     setShowSpiner(true);
 
     await getSearchBooksApi.data(`/books?search=${search}%20great`).then(response => {
-      dispacth(books(response.data));
+      dispacth(books(response));
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
@@ -68,8 +68,10 @@ function Home() {
 
   useEffect(() => {
 
+    
     getBooks();
 
+    
   }, [search, page]);
 
   const handleInput = (e) => {
@@ -77,15 +79,27 @@ function Home() {
     if (e.length >= 4) {
       setSearch(e)
     } else {
-      console.log("setpage")
       setPage(1)
     }
 
+    setValueInput(e)
+
+   // filterBooks(e);
+
   }
+
+  // const filterBooks = (query)=>{
+
+  //   const books = [{title:'paulo',name:'teste'},{title:'saulo'},{title:'roberto'},{title:'golberto'}]
+  //   const ret = books.filter(function(item){
+  //     return item.title.match(query)}) 
+
+  //    console.log(ret);
+  // }
 
   const numberPage = (value) => {
 
-    if (result) {
+    if (booksApi) {
       let page = value / 32
       let pageTrunc = Math.trunc(page)
       if (page > pageTrunc) {
@@ -102,7 +116,7 @@ function Home() {
   return (
 
     <>
-      <HeaderApp amount={result ? `Página ${page} de ${numberPage(result[0].count)}` : ""} />
+      <HeaderApp amount={booksApi ? `Página ${page} de ${numberPage(booksApi[0].count)}` : ""} />
       <ResponsiveLayout>
 
         <Box
@@ -114,6 +128,7 @@ function Home() {
 
           <Box paddingBottom={16}>
             <Input
+              value={valueInput}
               label={"Busca"}
               placeholder={"busca"}
               onChange={handleInput}
@@ -133,8 +148,8 @@ function Home() {
             }
 
             {
-              result && (
-                result.map(item => (
+              booksApi && (
+                booksApi.map(item => (
                   <React.Fragment >
                     {item.results.map(item => (
 
@@ -161,7 +176,7 @@ function Home() {
             }
 
             {
-              result && (
+              booksApi && (
 
                 <Box paddingTop={36} paddingBottom={36}>
                   <ButtonLayout>
