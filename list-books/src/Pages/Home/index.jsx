@@ -84,18 +84,7 @@ function Home() {
 
     setValueInput(e)
 
-   // filterBooks(e);
-
   }
-
-  // const filterBooks = (query)=>{
-
-  //   const books = [{title:'paulo',name:'teste'},{title:'saulo'},{title:'roberto'},{title:'golberto'}]
-  //   const ret = books.filter(function(item){
-  //     return item.title.match(query)}) 
-
-  //    console.log(ret);
-  // }
 
   const numberPage = (value) => {
 
