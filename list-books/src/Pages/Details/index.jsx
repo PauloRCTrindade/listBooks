@@ -12,7 +12,6 @@ import {
   ResponsiveLayout,
   Tag
 } from '@telefonica/mistica';
-import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 
 export default function Details() {
 

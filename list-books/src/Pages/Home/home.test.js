@@ -6,9 +6,9 @@ import { screen, render } from '@testing-library/react'
 import { getVivoSkin, ThemeContextProvider } from '@telefonica/mistica';
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { Provider } from 'react-redux';
-import { MemoryRouter, useParams } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
-import { getBooksApi, getDetaisBookApi } from '../../Services/api';
+import { getBooksApi } from '../../Services/api';
 
 import store from '../../store/store';
 import Home from './index';
@@ -16,19 +16,19 @@ import Details from '../Details';
 
 
 
-describe('list books search', () => {
-  
-  it("should show all books searched", async () => {
-    
-    jest.mock('react-router-dom', () => {
-      return {      
-        useParams() {
-          return{
-            id: '1'
-          }
-         },      
-       }
-     }); 
+describe('list books details', () => {
+
+  // em desenvolvimento
+
+  jest.mock('react-router-dom', () => {
+    return {
+      useParams: () => ({
+        id: '1'
+      })
+    }
+  }) 
+
+  it("should show deatails books", async () => {    
 
     const { debug } = render(
       <ThemeContextProvider
@@ -43,8 +43,7 @@ describe('list books search', () => {
 
     await waitFor(() => {
       debug()
-
-    expect(screen.getByText(/The Declaration of Independence of the United States of America/i)).toBeInTheDocument()
+      expect(screen.getByText(/The Declaration of Independence of the United States of America/i)).toBeInTheDocument()
 
     }, { timeout: 3000 })
 
@@ -53,7 +52,7 @@ describe('list books search', () => {
 
 describe('details by clicking on the book', () => {
   it("should show book clicked", async () => {
-    
+
     const { debug } = render(
       <ThemeContextProvider
         theme={{ skin: getVivoSkin(), i18n: { locale: 'pt-BR', phoneNumberFormattingRegionCode: 'BR' } }}>
