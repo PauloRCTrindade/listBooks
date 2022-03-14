@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { api } from '../../Services/api';
+import { getDetaisBookApi } from '../../Services/api';
 import HeaderApp from '../../Components/Header';
 import {
   Box,
@@ -12,18 +12,21 @@ import {
   ResponsiveLayout,
   Tag
 } from '@telefonica/mistica';
+import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 
 export default function Details() {
 
   const navigate = useNavigate();
   const { id } = useParams();
 
+  console.log(id)
+
   const [detailsBook, setDetailsBook] = useState('');
 
   const getDetailsBook = async () => {
 
-    await api.get(`/books/${id}`).then(response => {
-      setDetailsBook([response.data])
+    await getDetaisBookApi.data(`/books/${id}`).then(response => {
+      setDetailsBook([response])
     }).catch(error => console.log(error)).finally();
 
   }
@@ -35,9 +38,9 @@ export default function Details() {
   const description = (item) => {
     return (
       <>
-        <p>{item.subjects}</p>
+        <>{item.subjects}</>
 
-        <p>{`Autor: ${item.authors[0]?.name} - Viveu de: ${item.authors[0]?.birth_year} a ${item.authors[0]?.death_year}`}</p>
+        <>{`Autor: ${item.authors[0]?.name} - Viveu de: ${item.authors[0]?.birth_year} a ${item.authors[0]?.death_year}`}</>
 
       </>
     );

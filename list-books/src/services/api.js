@@ -14,3 +14,8 @@ export const getSearchBooksApi = {
      return api.get(route).then(response => response.data)
   }
 }
+export const getDetaisBookApi = {
+  data(route) {
+     return api.get(route).then(response => response.data)
+  }
+}

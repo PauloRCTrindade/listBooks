@@ -40,7 +40,7 @@ export const mockBooksApi = {
     },
     {
       id: 2,
-      title: "Book 02",
+      title: "Livro 02",
       authors: [
         {
           "name": "Meery Christimas",
