@@ -1,13 +1,17 @@
 import React from 'react';
-import { Box, BoxedRow, IconHeartLight } from '@telefonica/mistica';
+import { Box, BoxedRow, IconButton, IconHeartFilled, IconHeartLight } from '@telefonica/mistica';
 import '../Card/styles.css'
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-export default function Card({ title, subtitle, titleLinesMax, asset, icon,linkTo }) {
+
+export default function Card({ title, subtitle, titleLinesMax, asset, favoriteOnPress, linkTo, id }) {
+  const favoritesApi = useSelector((state) => state.favorites)
+
+  console.log(id)
 
   return (
     <>
-
 
       <Box className='boxCard'>
         <Box className='boxBook'>
@@ -18,16 +22,29 @@ export default function Card({ title, subtitle, titleLinesMax, asset, icon,linkT
               subtitle={subtitle}
               titleLinesMax={titleLinesMax}
               asset={asset}
+              id={id}
             />
           </Link>
         </Box>
 
-        <Box icon={icon} className='boxIcon'>
+        <Box className='boxIcon'>
+
           {
-            icon && (
-              <IconHeartLight />
+            !favoritesApi.active && (
+              <IconButton onPress={favoriteOnPress}>
+                <IconHeartLight />
+              </IconButton>
             )
           }
+
+          {
+            favoritesApi.active && (
+              <IconButton onPress={favoriteOnPress}>
+                <IconHeartFilled color='red' />
+              </IconButton>
+            )
+          }
+
         </Box>
 
       </Box>
@@ -35,14 +52,3 @@ export default function Card({ title, subtitle, titleLinesMax, asset, icon,linkT
     </>
   )
 };
-
-
-{/* <BoxedRow
-  title={item.title}
-  subtitle={item.authors[0]?.name}
-  titleLinesMax={2}
-  asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-
->
-
-</BoxedRow> */}

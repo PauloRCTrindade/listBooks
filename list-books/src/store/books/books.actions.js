@@ -1,9 +1,12 @@
 export const books = (data) =>{
   return{
-    type:'BOOKS',
-    payload:[data]
+      type:'BOOKS',
+      payload:[data]
   }
 };
+
+
+
 
 
 

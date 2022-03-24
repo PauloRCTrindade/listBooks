@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-operators */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
@@ -7,6 +8,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
+import { favorites } from '../../store/Favorites/favorites.actions';
 import { getBooksApi, getSearchBooksApi } from '../../Services/api';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 import './styles.css';
@@ -17,6 +19,8 @@ import {
   ButtonLayout,
   ButtonPrimary,
   ButtonSecondary,
+  IconButton,
+  IconHeartFilled,
   IconHeartLight,
   IconSearchLight,
   Image,
@@ -31,6 +35,9 @@ function Home() {
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
   const [valueInput, setValueInput] = useState("");
+  const [favoriteOnPress, setFavoriteOnPress] = useState(false);
+  const [idFavorite, setIdFavorite] = useState();
+
 
   const dispacth = useDispatch();
 
@@ -104,6 +111,22 @@ function Home() {
 
   }
 
+  const handleFavoriteOnPress = (value) => {
+
+    favoriteOnPress ? setFavoriteOnPress(false) : setFavoriteOnPress(true);
+
+    console.log(value)
+
+    setIdFavorite(value)
+
+
+
+
+    // dispacth(favorites({active:favoriteOnPress,id:value}));
+
+  }
+
+
   return (
 
     <>
@@ -144,20 +167,81 @@ function Home() {
                   <React.Fragment >
                     {item.results.map(item => (
 
-                      <div>
-                        <BoxedRowList >
+                      // <div>
+                      //   <BoxedRowList >
 
-                          <Card
-                            title={item.title}
-                            subtitle={item.authors[0]?.name}
-                            titleLinesMax={2}
-                            asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-                            icon={true}
-                            linkTo={`details/${item.id}`}
-                          />
-                        </BoxedRowList>
+                      //     <Card
+                      //       title={item.title}
+                      //       subtitle={item.authors[0]?.name}
+                      //       titleLinesMax={2}
+                      //       asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
+                      //       linkTo={`details/${item.id}`}
+                      //       id={favoriteOnPress}
+                      //       favoriteOnPress={() => handleFavoriteOnPress(item.id)}
+                      //     />
+                      //   </BoxedRowList>
 
-                      </div>
+                      // </div>
+
+                      <>
+
+                        <Box className='boxCard'>
+                          <Box className='boxBook'>
+
+                            <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
+                              <BoxedRow
+                                title={item.title}
+                                subtitle={item.authors[0]?.name}
+                                titleLinesMax={2}
+                                asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
+                              />
+                            </Link>
+                          </Box>
+
+                          <Box className='boxIcon'>
+
+                            {/* {
+                              item.id !== 84 && favoriteOnPress && (
+
+                                <IconButton onPress={() => handleFavoriteOnPress()}>
+                                  <IconHeartLight />
+                                </IconButton>
+                              )
+
+                            } */}
+
+                            {
+                              item.id === idFavorite && favoriteOnPress && (
+                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
+                                  <IconHeartFilled color='red' />
+                                </IconButton>
+                              ) || item.id === idFavorite &&  !favoriteOnPress &&  (
+                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
+                                  <IconHeartLight />
+                                </IconButton>
+                              ) || item.id !== idFavorite && !favoriteOnPress &&  (
+                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
+                                  <IconHeartLight />
+                                </IconButton>
+                              )   || item.id !== idFavorite && favoriteOnPress &&  (
+                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
+                                  <IconHeartLight />
+                                </IconButton> )
+                            } 
+
+                            {/* {
+                              true &&  (
+                                <IconButton onPress={() => handleFavoriteOnPress()}>
+                                  <IconHeartFilled color='black' />
+                                </IconButton>
+                              )
+                            } */}
+
+                          </Box>
+
+                        </Box>
+
+                      </>
 
                     ))}
                   </React.Fragment>
