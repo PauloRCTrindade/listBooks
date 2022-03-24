@@ -17,11 +17,13 @@ import {
   ButtonLayout,
   ButtonPrimary,
   ButtonSecondary,
+  IconHeartLight,
   IconSearchLight,
   Image,
   ResponsiveLayout,
   Spinner,
 } from '@telefonica/mistica';
+import Card from '../../Components/Card';
 
 function Home() {
 
@@ -68,10 +70,10 @@ function Home() {
 
   useEffect(() => {
 
-    
+
     getBooks();
 
-    
+
   }, [search, page]);
 
   const handleInput = (e) => {
@@ -144,16 +146,15 @@ function Home() {
 
                       <div>
                         <BoxedRowList >
-                          <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
-                            <BoxedRow
-                              title={item.title}
-                              subtitle={item.authors[0]?.name}
-                              titleLinesMax={2}
-                              asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-                            >
-                            </BoxedRow>
-                          </Link>
 
+                          <Card
+                            title={item.title}
+                            subtitle={item.authors[0]?.name}
+                            titleLinesMax={2}
+                            asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
+                            icon={true}
+                            linkTo={`details/${item.id}`}
+                          />
                         </BoxedRowList>
 
                       </div>
