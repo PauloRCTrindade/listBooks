@@ -2,9 +2,17 @@ Body{
   background-color:#F6F6F6;
 }
 
-.BoxContainer{   
-  display: grid;  
-  gap: 0.5%;
+.boxCard{
+  display: flex;
+}
+
+.boxBook{
+  width: 100%;
+  margin-bottom: 2%;
+}
+
+.boxIcon{
+  margin-left: 0.5%;
 }
 
 .spinner{

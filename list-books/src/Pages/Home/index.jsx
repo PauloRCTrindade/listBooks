@@ -8,7 +8,6 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
-import { favorites } from '../../store/Favorites/favorites.actions';
 import { getBooksApi, getSearchBooksApi } from '../../Services/api';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 import './styles.css';
@@ -27,7 +26,6 @@ import {
   ResponsiveLayout,
   Spinner,
 } from '@telefonica/mistica';
-import Card from '../../Components/Card';
 
 function Home() {
 
@@ -36,31 +34,54 @@ function Home() {
   const [showSpiner, setShowSpiner] = useState(true);
   const [valueInput, setValueInput] = useState("");
   const [favoriteOnPress, setFavoriteOnPress] = useState(false);
-  const [idFavorite, setIdFavorite] = useState();
-
+  const [booksApi, setBooksApi] = useState([]);
 
   const dispacth = useDispatch();
 
-  const booksApi = useSelector((state) => state.books)
+  const booksListShow = useSelector((state) => state.books)
 
   const searchBooks = async () => {
     setShowSpiner(true);
 
     await getSearchBooksApi.data(`/books?search=${search}%20great`).then(response => {
-      dispacth(books(response));
+      setBooksApi([response])
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
 
-  const pagesBooks = async () => {
+  const getApi = async () => {
 
     setShowSpiner(true);
 
     await getBooksApi.data(`/books/?page=${page}`).then(response => {
 
-      dispacth(books(response))
+      setBooksApi([response])
 
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
+
+  }
+
+  const newListBooks = () => {
+    const booksListApi = booksApi.map(item => item.results)
+    const booksListRedux = []
+
+    if (booksListApi.length) {
+      for (var i = 0; i < booksListApi[0].length; i++) {
+        const newBook = [
+          {
+            id: booksListApi[0][i].id,
+            title: booksListApi[0][i].title,
+            authors: booksListApi[0][i].authors[0],
+            image: booksListApi[0][i].formats['image/jpeg'],
+            favorites: false,
+
+          }
+        ]
+        booksListRedux.push(newBook)
+      }
+
+    }
+    dispacth(books(booksListRedux))
 
   }
 
@@ -70,18 +91,26 @@ function Home() {
       searchBooks()
 
     } else {
-      pagesBooks()
+      getApi();
+
     }
 
   }
 
   useEffect(() => {
 
-
     getBooks();
 
-
   }, [search, page]);
+
+
+  useEffect(() => {
+
+    newListBooks()
+
+  }, [booksApi]);
+
+
 
   const handleInput = (e) => {
 
@@ -97,7 +126,7 @@ function Home() {
 
   const numberPage = (value) => {
 
-    if (booksApi) {
+    if (booksListShow) {
       let page = value / 32
       let pageTrunc = Math.trunc(page)
       if (page > pageTrunc) {
@@ -117,20 +146,13 @@ function Home() {
 
     console.log(value)
 
-    setIdFavorite(value)
-
-
-
-
-    // dispacth(favorites({active:favoriteOnPress,id:value}));
 
   }
-
 
   return (
 
     <>
-      <HeaderApp amount={booksApi ? `Página ${page} de ${numberPage(booksApi[0].count)}` : ""} />
+      <HeaderApp />
       <ResponsiveLayout>
 
         <Box
@@ -162,95 +184,64 @@ function Home() {
             }
 
             {
-              booksApi && (
-                booksApi.map(item => (
-                  <React.Fragment >
-                    {item.results.map(item => (
+              booksListShow && (
 
-                      // <div>
-                      //   <BoxedRowList >
+                booksListShow.map(item => (
 
-                      //     <Card
-                      //       title={item.title}
-                      //       subtitle={item.authors[0]?.name}
-                      //       titleLinesMax={2}
-                      //       asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-                      //       linkTo={`details/${item.id}`}
-                      //       id={favoriteOnPress}
-                      //       favoriteOnPress={() => handleFavoriteOnPress(item.id)}
-                      //     />
-                      //   </BoxedRowList>
+                  item.map(item => (
 
-                      // </div>
+                    <>
 
-                      <>
+                      <Box className='boxCard'>
+                        <Box className='boxBook'>
 
-                        <Box className='boxCard'>
-                          <Box className='boxBook'>
+                          <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
+                            <BoxedRow
+                              title={item.title}
+                              subtitle={item.authors?.name}
+                              titleLinesMax={2}
+                              asset={<Image height={120} width={80} src={item.image} />}
+                            />
+                          </Link>
+                        </Box>
 
-                            <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
-                              <BoxedRow
-                                title={item.title}
-                                subtitle={item.authors[0]?.name}
-                                titleLinesMax={2}
-                                asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
-                              />
-                            </Link>
-                          </Box>
+                        <Box className='boxIcon'>
 
-                          <Box className='boxIcon'>
+                          {
+                            item.favorites === false && (
 
-                            {/* {
-                              item.id !== 84 && favoriteOnPress && (
+                              <IconButton onPress={() => handleFavoriteOnPress()}>
+                                <IconHeartLight />
+                              </IconButton>
+                            )
 
-                                <IconButton onPress={() => handleFavoriteOnPress()}>
-                                  <IconHeartLight />
-                                </IconButton>
-                              )
+                          }
 
-                            } */}
 
-                            {
-                              item.id === idFavorite && favoriteOnPress && (
-                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
-                                  <IconHeartFilled color='red' />
-                                </IconButton>
-                              ) || item.id === idFavorite &&  !favoriteOnPress &&  (
-                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
-                                  <IconHeartLight />
-                                </IconButton>
-                              ) || item.id !== idFavorite && !favoriteOnPress &&  (
-                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
-                                  <IconHeartLight />
-                                </IconButton>
-                              )   || item.id !== idFavorite && favoriteOnPress &&  (
-                                <IconButton onPress={() => handleFavoriteOnPress(item.id )}>
-                                  <IconHeartLight />
-                                </IconButton> )
-                            } 
-
-                            {/* {
-                              true &&  (
-                                <IconButton onPress={() => handleFavoriteOnPress()}>
-                                  <IconHeartFilled color='black' />
-                                </IconButton>
-                              )
-                            } */}
-
-                          </Box>
+                          {
+                            item.favorites === true && (
+                              <IconButton onPress={() => handleFavoriteOnPress()}>
+                                <IconHeartFilled color='black' />
+                              </IconButton>
+                            )
+                          }
 
                         </Box>
 
-                      </>
+                      </Box>
 
-                    ))}
-                  </React.Fragment>
+                    </>
+
+                  ))
                 ))
+
+
               )
             }
 
+
             {
-              booksApi && (
+              booksListShow && (
 
                 <Box paddingTop={36} paddingBottom={36}>
                   <ButtonLayout>
@@ -280,5 +271,4 @@ function Home() {
 };
 
 export default connect()(Home);
-
 
