@@ -2,6 +2,13 @@ Body{
   background-color:#F6F6F6;
 }
 
+.boxSearch{
+  display: flex;
+  justify-content: space-between;
+  margin-right:2.5% ;
+  
+}
+
 .boxCard{
   display: flex;
 }

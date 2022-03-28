@@ -2,19 +2,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { connect, useDispatch, useSelector } from 'react-redux';
 
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
+import { favoritesIconRedux } from '../../store/Favorites/Id/favoritesId.actions';
+import { favoritesBooksRedux } from '../../store/Favorites/Books/favoritesBooks.actions'
 import { getBooksApi, getSearchBooksApi } from '../../Services/api';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 import './styles.css';
 import {
   Box,
   BoxedRow,
-  BoxedRowList,
   ButtonLayout,
   ButtonPrimary,
   ButtonSecondary,
@@ -29,22 +30,26 @@ import {
 
 function Home() {
 
+  const navigate = useNavigate()
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
   const [valueInput, setValueInput] = useState("");
-  const [favoriteOnPress, setFavoriteOnPress] = useState(false);
-  const [booksApi, setBooksApi] = useState([]);
 
   const dispacth = useDispatch();
 
   const booksListShow = useSelector((state) => state.books)
 
+  const favoritesIcon = useSelector((state) => state.favoritesIcons)
+
+  const favoritesBooks = useSelector((state) => state.favoritesBooks)
+
   const searchBooks = async () => {
     setShowSpiner(true);
 
     await getSearchBooksApi.data(`/books?search=${search}%20great`).then(response => {
-      setBooksApi([response])
+      dispacth(books(response))
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
@@ -55,33 +60,9 @@ function Home() {
 
     await getBooksApi.data(`/books/?page=${page}`).then(response => {
 
-      setBooksApi([response])
+      dispacth(books(response))
 
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
-
-  }
-
-  const newListBooks = () => {
-    const booksListApi = booksApi.map(item => item.results)
-    const booksListRedux = []
-
-    if (booksListApi.length) {
-      for (var i = 0; i < booksListApi[0].length; i++) {
-        const newBook = [
-          {
-            id: booksListApi[0][i].id,
-            title: booksListApi[0][i].title,
-            authors: booksListApi[0][i].authors[0],
-            image: booksListApi[0][i].formats['image/jpeg'],
-            favorites: false,
-
-          }
-        ]
-        booksListRedux.push(newBook)
-      }
-
-    }
-    dispacth(books(booksListRedux))
 
   }
 
@@ -102,15 +83,6 @@ function Home() {
     getBooks();
 
   }, [search, page]);
-
-
-  useEffect(() => {
-
-    newListBooks()
-
-  }, [booksApi]);
-
-
 
   const handleInput = (e) => {
 
@@ -140,13 +112,28 @@ function Home() {
 
   }
 
-  const handleFavoriteOnPress = (value) => {
+  const handleFavorite = (id, title, author, image) => {
 
-    favoriteOnPress ? setFavoriteOnPress(false) : setFavoriteOnPress(true);
+    const favoriteBook = {
+      id: id,
+      title: title,
+      author: author,
+      image: image
+    }
 
-    console.log(value)
+    dispacth(favoritesIconRedux([...favoritesIcon, id]))
 
+    dispacth(favoritesBooksRedux([...favoritesBooks, favoriteBook]))
 
+    console.log(favoritesBooks)
+
+  }
+
+  const handleUnfavorite = (id) => {
+
+    const unFavorite = favoritesIcon.filter(item => item !== id)
+
+    dispacth(favoritesIconRedux(unFavorite));
   }
 
   return (
@@ -162,7 +149,7 @@ function Home() {
           paddingBottom={16}
         >
 
-          <Box paddingBottom={16}>
+          <Box className='boxSearch' paddingBottom={16}>
             <Input
               value={valueInput}
               label={"Busca"}
@@ -170,6 +157,12 @@ function Home() {
               onChange={handleInput}
               endIcon={<IconSearchLight />}
             />
+
+            <ButtonLayout>
+
+              <ButtonSecondary onPress={() => navigate('/favoritesBooks')} >Favoritos</ButtonSecondary>
+
+            </ButtonLayout>
           </Box>
 
           <Box className='BoxContainer' >
@@ -186,53 +179,52 @@ function Home() {
             {
               booksListShow && (
 
-                booksListShow.map(item => (
+                booksListShow.results.map(item => (
 
-                  item.map(item => (
+                  <>
 
-                    <>
+                    <Box className='boxCard'>
+                      <Box className='boxBook'>
 
-                      <Box className='boxCard'>
-                        <Box className='boxBook'>
+                        <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
+                          <BoxedRow
+                            title={item.title}
+                            subtitle={item.authors[0]?.name}
+                            titleLinesMax={2}
+                            asset={<Image height={120} width={80} src={item.formats['image/jpeg']} />}
+                          />
+                        </Link>
+                      </Box>
 
-                          <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
-                            <BoxedRow
-                              title={item.title}
-                              subtitle={item.authors?.name}
-                              titleLinesMax={2}
-                              asset={<Image height={120} width={80} src={item.image} />}
-                            />
-                          </Link>
-                        </Box>
+                      <Box className='boxIcon'>
 
-                        <Box className='boxIcon'>
+                        {
+                          item.id !== favoritesIcon.find(element => element === item.id) && (
 
-                          {
-                            item.favorites === false && (
+                            <IconButton onPress={() => handleFavorite(item.id, item.title, item.authors[0]?.name, item.formats['image/jpeg'])}>
+                              <IconHeartLight />
+                            </IconButton>
+                          )
 
-                              <IconButton onPress={() => handleFavoriteOnPress()}>
-                                <IconHeartLight />
-                              </IconButton>
-                            )
-
-                          }
+                        }
 
 
-                          {
-                            item.favorites === true && (
-                              <IconButton onPress={() => handleFavoriteOnPress()}>
-                                <IconHeartFilled color='black' />
-                              </IconButton>
-                            )
-                          }
-
-                        </Box>
+                        {
+                          item.id === favoritesIcon.find(element => element === item.id) && (
+                            <IconButton onPress={() => handleUnfavorite(item.id)}>
+                              <IconHeartFilled color='#df2323' />
+                            </IconButton>
+                          )
+                        }
 
                       </Box>
 
-                    </>
+                    </Box>
 
-                  ))
+                  </>
+
+
+
                 ))
 
 
@@ -255,6 +247,7 @@ function Home() {
                     <ButtonSecondary onPress={() => setPage(page - 1)} >Página Anterior</ButtonSecondary>
 
                   </ButtonLayout>
+
                 </Box>
               )
 

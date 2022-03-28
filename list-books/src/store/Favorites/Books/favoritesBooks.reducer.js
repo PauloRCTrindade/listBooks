@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-anonymous-default-export
-export function ListBooks(state = "", action) {
+export function FavoritesBooksRedux(state = [], action) {
 
   switch (action.type) {
-    case 'BOOKS':
+    case 'FAVORITES_BOOKS':
       return action.payload
       
     default:
