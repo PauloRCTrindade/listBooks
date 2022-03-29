@@ -18,6 +18,7 @@ import {
   ButtonLayout,
   ButtonPrimary,
   ButtonSecondary,
+  Checkbox,
   IconButton,
   IconHeartFilled,
   IconHeartLight,
@@ -25,6 +26,8 @@ import {
   Image,
   ResponsiveLayout,
   Spinner,
+  Text1,
+  Text2,
 } from '@telefonica/mistica';
 
 function Home() {
@@ -34,6 +37,7 @@ function Home() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showSpiner, setShowSpiner] = useState(true);
+  const [inputChecked, setInputChecked] = useState(false);
   const [valueInput, setValueInput] = useState("");
 
   const dispatch = useDispatch();
@@ -59,7 +63,7 @@ function Home() {
 
       dispatch(books(response))
 
-    }).catch(error => console.log(error)).finally(setShowSpiner(false));
+    }).catch(error => console.log(error)).finally(setTimeout(() => { setShowSpiner(false) }, 1000));
 
   }
 
@@ -130,6 +134,14 @@ function Home() {
     dispatch(favoritesBooksRedux(unFavoriteBook));
   }
 
+  const InputCheckedFavoritesBooks = () => {
+
+    inputChecked ? setInputChecked(false) : setInputChecked(true);
+
+  }
+
+  console.log(favoritesBooks)
+
   return (
 
     <>
@@ -152,6 +164,10 @@ function Home() {
               endIcon={<IconSearchLight />}
             />
 
+            <Checkbox onChange={InputCheckedFavoritesBooks}>
+              {<Text2 color='rgba(49,50,53, 0.8)' >Filter Favorites</Text2>}
+            </Checkbox>
+
             <ButtonLayout>
 
               <ButtonSecondary onPress={() => navigate('/favoritesBooks')} >Favorites</ButtonSecondary>
@@ -171,7 +187,7 @@ function Home() {
             }
 
             {
-              booksListShow && (
+              booksListShow && !inputChecked && (
 
                 booksListShow.results.map(item => (
 
@@ -193,22 +209,18 @@ function Home() {
                       <Box className='boxIcon'>
 
                         {
-                          item.id !== favoritesBooks.find(element => element.id === item.id)?.id && (
+                          item.id !== favoritesBooks.find(element => element.id === item.id)?.id ? (
 
                             <IconButton onPress={() => handleFavorite(item.id, item.title, item.authors[0]?.name, item.formats['image/jpeg'])}>
                               <IconHeartLight />
                             </IconButton>
-                          )
-
-                        }
-
-
-                        {
-                          item.id === favoritesBooks.find(element => element.id === item.id)?.id && (
+                          ) : (
                             <IconButton onPress={() => handleUnfavorite(item.id)}>
                               <IconHeartFilled color='#df2323' />
                             </IconButton>
+
                           )
+
                         }
 
                       </Box>
@@ -221,6 +233,53 @@ function Home() {
 
 
               )
+            }
+
+            {
+              favoritesBooks && inputChecked && (
+                favoritesBooks.map(item => (
+                  <>
+
+                    <Box className='boxCard'>
+                      <Box className='boxBook'>
+
+                        <Link style={{ textDecoration: 'none' }} to={`details/${item.id}`} >
+                          <BoxedRow
+                            title={item.title}
+                            subtitle={item.author}
+                            titleLinesMax={2}
+                            asset={<Image height={120} width={80} src={item.image} />}
+                          />
+                        </Link>
+                      </Box>
+
+                      <Box className='boxIcon'>
+
+                        {
+                          (
+                            <IconButton onPress={() => handleUnfavorite(item.id)}>
+                              <IconHeartFilled color='#df2323' />
+                            </IconButton>
+                          )
+                        }
+
+                      </Box>
+
+                    </Box>
+
+
+                  </>
+                ))
+              )
+            }
+
+            {
+              !favoritesBooks.length && inputChecked && (
+                <div className='not-found-favorite-book'>
+                  {<Text2 color='rgba(49,50,53, 0.8)' >Ops!!! Not Favorited Book </Text2>}
+                </div>
+              )
+
             }
 
 

@@ -5,12 +5,14 @@ Body{
 .boxSearch{
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-right:2.5% ;
   
 }
 
 .boxCard{
   display: flex;
+  position: relative;
 }
 
 .boxBook{
@@ -20,11 +22,19 @@ Body{
 
 .boxIcon{
   margin-left: 0.5%;
+  position: absolute;
+  right: 10px;
+  top: 5%;
 }
 
 .spinner{
   display: flex;
   justify-content: center;
+}
+
+.not-found-favorite-book{
+  text-align: center;
+
 }
 
 
