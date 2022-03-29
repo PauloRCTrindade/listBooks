@@ -18,8 +18,6 @@ export default function Details() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  console.log(id)
-
   const [detailsBook, setDetailsBook] = useState('');
 
   const getDetailsBook = async () => {

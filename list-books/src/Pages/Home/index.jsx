@@ -8,7 +8,6 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
-import { favoritesIconRedux } from '../../store/Favorites/Id/favoritesId.actions';
 import { favoritesBooksRedux } from '../../store/Favorites/Books/favoritesBooks.actions'
 import { getBooksApi, getSearchBooksApi } from '../../Services/api';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
@@ -37,11 +36,9 @@ function Home() {
   const [showSpiner, setShowSpiner] = useState(true);
   const [valueInput, setValueInput] = useState("");
 
-  const dispacth = useDispatch();
+  const dispatch = useDispatch();
 
   const booksListShow = useSelector((state) => state.books)
-
-  const favoritesIcon = useSelector((state) => state.favoritesIcons)
 
   const favoritesBooks = useSelector((state) => state.favoritesBooks)
 
@@ -49,7 +46,7 @@ function Home() {
     setShowSpiner(true);
 
     await getSearchBooksApi.data(`/books?search=${search}%20great`).then(response => {
-      dispacth(books(response))
+      dispatch(books(response))
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
   }
@@ -60,7 +57,7 @@ function Home() {
 
     await getBooksApi.data(`/books/?page=${page}`).then(response => {
 
-      dispacth(books(response))
+      dispatch(books(response))
 
     }).catch(error => console.log(error)).finally(setShowSpiner(false));
 
@@ -121,25 +118,22 @@ function Home() {
       image: image
     }
 
-    dispacth(favoritesIconRedux([...favoritesIcon, id]))
-
-    dispacth(favoritesBooksRedux([...favoritesBooks, favoriteBook]))
-
-    console.log(favoritesBooks)
-
+    dispatch(favoritesBooksRedux([...favoritesBooks, favoriteBook]))
   }
 
   const handleUnfavorite = (id) => {
 
-    const unFavorite = favoritesIcon.filter(item => item !== id)
 
-    dispacth(favoritesIconRedux(unFavorite));
+    const unFavoriteBook = favoritesBooks.filter(item => item.id !== id)
+
+
+    dispatch(favoritesBooksRedux(unFavoriteBook));
   }
 
   return (
 
     <>
-      <HeaderApp />
+      <HeaderApp amount={`${page} / ${numberPage(booksListShow.count)}`} />
       <ResponsiveLayout>
 
         <Box
@@ -152,7 +146,7 @@ function Home() {
           <Box className='boxSearch' paddingBottom={16}>
             <Input
               value={valueInput}
-              label={"Busca"}
+              label={"Search"}
               placeholder={"busca"}
               onChange={handleInput}
               endIcon={<IconSearchLight />}
@@ -160,7 +154,7 @@ function Home() {
 
             <ButtonLayout>
 
-              <ButtonSecondary onPress={() => navigate('/favoritesBooks')} >Favoritos</ButtonSecondary>
+              <ButtonSecondary onPress={() => navigate('/favoritesBooks')} >Favorites</ButtonSecondary>
 
             </ButtonLayout>
           </Box>
@@ -199,7 +193,7 @@ function Home() {
                       <Box className='boxIcon'>
 
                         {
-                          item.id !== favoritesIcon.find(element => element === item.id) && (
+                          item.id !== favoritesBooks.find(element => element.id === item.id)?.id && (
 
                             <IconButton onPress={() => handleFavorite(item.id, item.title, item.authors[0]?.name, item.formats['image/jpeg'])}>
                               <IconHeartLight />
@@ -210,7 +204,7 @@ function Home() {
 
 
                         {
-                          item.id === favoritesIcon.find(element => element === item.id) && (
+                          item.id === favoritesBooks.find(element => element.id === item.id)?.id && (
                             <IconButton onPress={() => handleUnfavorite(item.id)}>
                               <IconHeartFilled color='#df2323' />
                             </IconButton>
@@ -222,8 +216,6 @@ function Home() {
                     </Box>
 
                   </>
-
-
 
                 ))
 

@@ -3,7 +3,6 @@ import HeaderApp from '../../Components/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { favoritesBooksRedux } from '../../store/Favorites/Books/favoritesBooks.actions';
-import { favoritesIconRedux } from '../../store/Favorites/Id/favoritesId.actions';
 
 
 export default function FavoritesBooks() {
@@ -14,17 +13,11 @@ export default function FavoritesBooks() {
 
   const favoritesBooks = useSelector((state) => state.favoritesBooks)
 
-  const favoritesIcon = useSelector((state) => state.favoritesIcons)
-
   const handleUnfavorite = (id) => {
 
     const unFavoriteBook = favoritesBooks.filter(item => item.id !== id)
-    const unFavoriteIcon = favoritesIcon.filter(item => item !== id)
-
-    dispatch(favoritesIconRedux(unFavoriteIcon));
 
     dispatch(favoritesBooksRedux(unFavoriteBook));
-
   }
 
 
