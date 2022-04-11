@@ -8,7 +8,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import HeaderApp from '../../Components/Header';
 import Input from '../../Components/Input';
 import { books } from '../../store/Books/books.actions';
-import { favoritesBooksRedux } from '../../store/Favorites/Books/favoritesBooks.actions'
+import { favoritesBooksRedux } from '../../store/Favorites/Books/favoritesBooks.actions';
 import { getBooksApi, getSearchBooksApi } from '../../Services/api';
 import { mockBooksApi } from '../../___mocks___/mockBooksApi';
 import './styles.css';
@@ -163,10 +163,14 @@ function Home() {
               onChange={handleInput}
               endIcon={<IconSearchLight />}
             />
+            <Checkbox onChange={''}>
+              {<Text2 color='rgba(49,50,53, 0.8)' >Filter Authors</Text2>}
+            </Checkbox>
 
             <Checkbox onChange={InputCheckedFavoritesBooks}>
               {<Text2 color='rgba(49,50,53, 0.8)' >Filter Favorites</Text2>}
             </Checkbox>
+
 
             <ButtonLayout>
 
